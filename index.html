@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AlemaniaCarImport | Peritaje y Gestión Integral de Vehículos</title>
+    <link rel="icon" type="image/jpg" href="images/favicon.jpg?v=2">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,15 +17,15 @@
                     fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Outfit', 'sans-serif'] },
                     colors: {
                         brand: {
-                            bg: '#020617',      /* Fondo principal muy oscuro */
-                            surface: '#0f172a',  /* Fondo secundario */
-                            card: '#1e293b',     /* Fondo tarjetas */
-                            gold: '#d4af37',     /* Dorado Premium */
+                            bg: '#020617',      
+                            surface: '#0f172a',  
+                            card: '#1e293b',     
+                            gold: '#d4af37',     
                             goldDim: '#9e8229',
-                            text: '#e2e8f0',     /* Texto principal */
-                            muted: '#94a3b8',    /* Texto secundario */
-                            danger: '#ef4444',   /* Rojo alertas */
-                            success: '#10b981'   /* Verde éxito */
+                            text: '#e2e8f0',     
+                            muted: '#94a3b8',    
+                            danger: '#ef4444',   
+                            success: '#10b981'   
                         }
                     },
                     backgroundImage: {
@@ -34,27 +36,50 @@
         }
     </script>
     <style>
-        /* Estilos personalizados para efectos visuales */
+        /* Estilos personalizados */
         .gold-gradient { background: linear-gradient(135deg, #d4af37 0%, #aa8c2c 100%); }
         .text-gradient { background: linear-gradient(to right, #d4af37, #fde68a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
+        /* Estilo base del sello (la animación se controla vía JS/CSS clases extra) */
         .rejected-stamp {
             border: 5px solid #ef4444;
             color: #ef4444;
             text-transform: uppercase;
             font-weight: 900;
             padding: 0.5rem 1rem;
-            transform: rotate(-15deg);
+            transform: scale(3) rotate(-15deg); /* Estado inicial grande */
+            opacity: 0;
             display: inline-block;
-            opacity: 0.8;
             letter-spacing: 0.1em;
             mix-blend-mode: hard-light;
         }
 
-        /* Nuevo estilo para el sello de "En Construcción/Mejora" */
+        /* Animación de golpe del sello */
+        @keyframes stamp-slam {
+            0% {
+                opacity: 0;
+                transform: scale(3) rotate(-5deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(0.8) rotate(-15deg);
+            }
+            70% {
+                transform: scale(1.1) rotate(-15deg);
+            }
+            100% {
+                opacity: 0.8;
+                transform: scale(1) rotate(-15deg);
+            }
+        }
+
+        .stamp-animate {
+            animation: stamp-slam 0.6s cubic-bezier(0.6, 0.04, 0.98, 0.335) forwards;
+        }
+
         .wip-stamp {
-            background-color: #f3f4f6; /* Color papel claro */
-            color: #334155; /* Texto oscuro */
+            background-color: #f3f4f6; 
+            color: #334155; 
             border: 4px dashed #94a3b8;
             text-transform: uppercase;
             font-weight: 800;
@@ -66,7 +91,6 @@
             position: relative;
         }
         
-        /* Efecto de cinta adhesiva en las esquinas del sello */
         .wip-stamp::before, .wip-stamp::after {
             content: '';
             position: absolute;
@@ -79,13 +103,29 @@
         .wip-stamp::before { top: -5px; left: 50%; transform: translateX(-50%) rotate(2deg); }
         .wip-stamp::after { bottom: -5px; left: 50%; transform: translateX(-50%) rotate(-1deg); }
 
-        /* Animación suave para detalles */
         details > summary { list-style: none; }
         details > summary::-webkit-details-marker { display: none; }
-        .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ESTILOS PARA LA SPLASH SCREEN */
+        /* --- SISTEMA DE ANIMACIÓN AL SCROLL --- */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.5, 0, 0, 1);
+        }
+
+        .reveal-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Retrasos escalonados */
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+        .delay-400 { transition-delay: 400ms; }
+        .delay-500 { transition-delay: 500ms; }
+
+        /* --- SPLASH SCREEN --- */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -97,11 +137,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.5s ease-out; /* Transición suave al desaparecer */
+            transition: opacity 0.8s ease-out;
         }
 
         #splash-screen img {
-            width: 800px; /* Ajusta el tamaño según prefieras */
+            width: 800px;
             height: auto;
             opacity: 0;
             animation: fadeInOut 3s ease-in-out forwards;
@@ -109,7 +149,7 @@
 
         .splash-hidden {
             opacity: 0;
-            pointer-events: none; /* Para que no bloquee clicks cuando sea invisible */
+            pointer-events: none;
         }
 
         @keyframes fadeInOut {
@@ -131,6 +171,7 @@
             <div class="text-xl font-display font-bold tracking-widest text-white">
                 ALEMANIA<span class="text-brand-gold">CAR</span>IMPORT
             </div>
+            
             <div class="hidden md:flex space-x-8 text-xs uppercase tracking-wider font-semibold text-brand-muted">
                 <a href="#mercado" class="hover:text-brand-gold transition">El Mercado</a>
                 <a href="#filtro" class="hover:text-brand-gold transition">Nuestro Filtro</a>
@@ -144,7 +185,7 @@
     </nav>
 
     <header class="h-screen min-h-[700px] bg-hero-pattern bg-cover bg-center bg-fixed flex flex-col justify-center items-center text-center px-4 relative">
-        <div class="max-w-4xl z-10 animate-fade-in">
+        <div class="max-w-4xl z-10 reveal-on-scroll delay-500"> 
             <div class="inline-flex items-center gap-2 px-4 py-1 mb-6 border border-brand-gold/30 bg-brand-gold/5 text-brand-gold text-xs font-bold uppercase tracking-widest rounded-sm">
                 <i class="fa-solid fa-user-shield"></i> Tus peritos en origen
             </div>
@@ -166,27 +207,31 @@
         </div>
     </header>
 
-    <div class="bg-brand-surface border-y border-white/5 py-8 relative z-20">
+    <div class="bg-brand-surface border-y border-white/5 py-8 relative z-20 reveal-on-scroll">
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-2 md:grid-cols-5 gap-8 text-center divide-x divide-white/5">
                 <div>
-                    <span class="block text-2xl md:text-3xl font-display font-bold text-white">227</span>
+                    <span class="block text-2xl md:text-3xl font-display font-bold text-white counter" data-target="227">0</span>
                     <span class="text-[10px] md:text-xs uppercase text-brand-muted font-bold tracking-wider">Coches Entregados</span>
                 </div>
                 <div>
-                    <span class="block text-2xl md:text-3xl font-display font-bold text-brand-danger">59</span>
+                    <span class="block text-2xl md:text-3xl font-display font-bold text-brand-danger counter" data-target="59">0</span>
                     <span class="text-[10px] md:text-xs uppercase text-brand-muted font-bold tracking-wider"><i class="fa-solid fa-ban mr-1"></i> Rechazados por Filtro</span>
                 </div>
                 <div>
-                    <span class="block text-2xl md:text-3xl font-display font-bold text-brand-gold">6.200€</span>
+                    <span class="block text-2xl md:text-3xl font-display font-bold text-brand-gold counter" data-target="6200" data-suffix="€">0€</span>
                     <span class="text-[10px] md:text-xs uppercase text-brand-muted font-bold tracking-wider">Ahorro Medio / Coche</span>
                 </div>
                 <div>
-                    <span class="block text-2xl md:text-3xl font-display font-bold text-white">+1.4M€</span>
+                    <span class="block text-2xl md:text-3xl font-display font-bold text-white">
+                        +<span class="counter" data-target="1.4" data-decimals="1">0</span>M€
+                    </span>
                     <span class="text-[10px] md:text-xs uppercase text-brand-muted font-bold tracking-wider">Ahorro Total</span>
                 </div>
                 <div class="col-span-2 md:col-span-1 border-t md:border-t-0 border-white/5 pt-4 md:pt-0">
-                    <span class="block text-2xl md:text-3xl font-display font-bold text-brand-success">4.8/5</span>
+                    <span class="block text-2xl md:text-3xl font-display font-bold text-brand-success">
+                        <span class="counter" data-target="4.8" data-decimals="1">0</span>/5
+                    </span>
                     <span class="text-[10px] md:text-xs uppercase text-brand-muted font-bold tracking-wider flex justify-center items-center gap-1">
                         <i class="fa-solid fa-star text-brand-success text-[10px]"></i> Trustpilot
                     </span>
@@ -198,12 +243,12 @@
     <section id="mercado" class="py-24 bg-brand-bg">
         <div class="container mx-auto px-6">
             <div class="grid md:grid-cols-2 gap-16 items-center">
-                <div>
+                <div class="reveal-on-scroll">
                     <h2 class="font-display text-3xl font-bold text-white mb-2">Alemania es el Origen.</h2>
                     <p class="text-brand-muted mb-10 text-sm uppercase tracking-widest">Datos comparativos vs Mercado Nacional</p>
                     
                     <div class="space-y-8">
-                        <div>
+                        <div class="reveal-on-scroll delay-100">
                             <div class="flex justify-between text-xs font-bold text-white mb-2">
                                 <span>Volumen de Stock (Premium)</span>
                                 <span class="text-brand-gold">6x Superior</span>
@@ -214,7 +259,7 @@
                             </div>
                         </div>
 
-                        <div>
+                        <div class="reveal-on-scroll delay-200">
                             <div class="flex justify-between text-xs font-bold text-white mb-2">
                                 <span>Equipamiento Medio</span>
                                 <span class="text-brand-gold">+40% Extras</span>
@@ -225,7 +270,7 @@
                             </div>
                         </div>
 
-                        <div>
+                        <div class="reveal-on-scroll delay-300">
                             <div class="flex justify-between text-xs font-bold text-white mb-2">
                                 <span>Precio de Compra</span>
                                 <span class="text-brand-success">Más Competitivo en Origen</span>
@@ -238,7 +283,7 @@
                     </div>
                 </div>
 
-                <div class="bg-brand-surface p-10 rounded-lg border border-white/5 relative shadow-2xl">
+                <div class="bg-brand-surface p-10 rounded-lg border border-white/5 relative shadow-2xl reveal-on-scroll delay-300">
                     <div class="absolute -top-5 -right-5 w-20 h-20 bg-brand-gold/10 rounded-full blur-xl"></div>
                     <i class="fa-solid fa-quote-left text-5xl text-brand-gold/10 absolute top-6 left-6"></i>
                     
@@ -257,12 +302,12 @@
 
     <section id="comparativa" class="py-24 bg-brand-surface">
         <div class="container mx-auto px-6">
-            <div class="text-center mb-16">
+            <div class="text-center mb-16 reveal-on-scroll">
                 <h2 class="font-display text-3xl md:text-4xl font-bold text-white">¿Quién defiende tus intereses?</h2>
                 <p class="text-brand-muted mt-4">Comparativa de modelos de negocio.</p>
             </div>
 
-            <div class="overflow-x-auto pb-4">
+            <div class="overflow-x-auto pb-4 reveal-on-scroll delay-200">
                 <table class="w-full min-w-[900px] text-left border-collapse">
                     <thead>
                         <tr>
@@ -317,7 +362,7 @@
 
         <div class="container mx-auto px-6 relative z-10">
             <div class="grid lg:grid-cols-2 gap-16 items-center">
-                <div>
+                <div class="reveal-on-scroll">
                     <span class="text-brand-danger font-bold tracking-widest uppercase text-xs border border-brand-danger/30 px-3 py-1 rounded-sm bg-brand-danger/10 mb-6 inline-block">
                         <i class="fa-solid fa-shield-virus mr-2"></i>Obsesión Forense
                     </span>
@@ -327,7 +372,7 @@
                     </p>
                     
                     <div class="space-y-8">
-                        <div class="flex gap-5">
+                        <div class="flex gap-5 reveal-on-scroll delay-100">
                             <div class="w-14 h-14 bg-brand-surface rounded flex items-center justify-center text-brand-gold text-2xl border border-white/10 shrink-0">
                                 <i class="fa-solid fa-layer-group"></i>
                             </div>
@@ -336,7 +381,7 @@
                                 <p class="text-sm text-brand-muted mt-1">Micrómetro sobre 15 puntos de la carrocería. Si hay >200 micras, hay repintado. Si hay >1000 micras, hay masilla y accidente oculto.</p>
                             </div>
                         </div>
-                        <div class="flex gap-5">
+                        <div class="flex gap-5 reveal-on-scroll delay-200">
                             <div class="w-14 h-14 bg-brand-surface rounded flex items-center justify-center text-brand-gold text-2xl border border-white/10 shrink-0">
                                 <i class="fa-solid fa-laptop-medical"></i>
                             </div>
@@ -345,7 +390,7 @@
                                 <p class="text-sm text-brand-muted mt-1">Conectamos nuestros equipos a la centralita. Verificamos si las horas de motor coinciden con los km y si han saltado airbags en el pasado.</p>
                             </div>
                         </div>
-                         <div class="flex gap-5">
+                         <div class="flex gap-5 reveal-on-scroll delay-300">
                             <div class="w-14 h-14 bg-brand-surface rounded flex items-center justify-center text-brand-gold text-2xl border border-white/10 shrink-0">
                                 <i class="fa-solid fa-clipboard-check"></i>
                             </div>
@@ -357,7 +402,7 @@
                     </div>
                 </div>
 
-                <div class="relative group">
+                <div class="relative group reveal-on-scroll delay-200" id="rejected-container">
                     <div class="bg-gray-900 border border-white/10 rounded-xl overflow-hidden shadow-2xl relative">
                         <div class="relative h-80">
                             <img src="images/modelorechazado.jpg" class="w-full h-full object-cover grayscale opacity-40">
@@ -369,7 +414,7 @@
                         </div>
 
                         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
-                            <div class="rejected-stamp text-4xl">RECHAZADO</div>
+                            <div id="rejected-stamp" class="rejected-stamp text-4xl">RECHAZADO</div>
                         </div>
 
                         <div class="p-6 bg-gray-900 relative z-10">
@@ -401,10 +446,10 @@
 
     <section id="resultados" class="py-24 bg-brand-surface">
         <div class="container mx-auto px-6">
-            <h2 class="font-display text-3xl font-bold text-white text-center mb-12">Resultados Admirables</h2>
+            <h2 class="font-display text-3xl font-bold text-white text-center mb-12 reveal-on-scroll">Resultados Admirables</h2>
             
             <div class="grid md:grid-cols-3 gap-8 mb-12">
-                <div class="bg-brand-bg border border-white/5 rounded-lg overflow-hidden group hover:border-brand-gold/30 transition">
+                <div class="bg-brand-bg border border-white/5 rounded-lg overflow-hidden group hover:border-brand-gold/30 transition reveal-on-scroll delay-100">
                     <div class="h-60 overflow-hidden relative">
                         <img src="images/resultados1.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
                         <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-brand-bg to-transparent h-20"></div>
@@ -426,12 +471,12 @@
                             <span class="text-white font-bold text-lg">52.500€</span>
                         </div>
                         <div class="bg-brand-success/10 text-brand-success px-4 py-3 rounded text-center font-bold border border-brand-success/20">
-                            Ahorro neto: 7.500€
+                            Ahorro neto: <span class="counter" data-target="7500" data-suffix="€">0€</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-brand-bg border border-white/5 rounded-lg overflow-hidden group hover:border-brand-gold/30 transition">
+                <div class="bg-brand-bg border border-white/5 rounded-lg overflow-hidden group hover:border-brand-gold/30 transition reveal-on-scroll delay-200">
                     <div class="h-60 overflow-hidden relative">
                         <img src="images/resultados2.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
                         <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-brand-bg to-transparent h-20"></div>
@@ -453,12 +498,12 @@
                             <span class="text-white font-bold text-lg">56.800€</span>
                         </div>
                         <div class="bg-brand-success/10 text-brand-success px-4 py-3 rounded text-center font-bold border border-brand-success/20">
-                            Ahorro neto: 8.200€
+                            Ahorro neto: <span class="counter" data-target="8200" data-suffix="€">0€</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-brand-bg border border-white/5 rounded-lg overflow-hidden group hover:border-brand-gold/30 transition">
+                <div class="bg-brand-bg border border-white/5 rounded-lg overflow-hidden group hover:border-brand-gold/30 transition reveal-on-scroll delay-300">
                     <div class="h-60 overflow-hidden relative">
                         <img src="images/resultados3.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
                         <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-brand-bg to-transparent h-20"></div>
@@ -480,13 +525,13 @@
                             <span class="text-white font-bold text-lg">45.100€</span>
                         </div>
                         <div class="bg-brand-success/10 text-brand-success px-4 py-3 rounded text-center font-bold border border-brand-success/20">
-                            Ahorro neto: 13.900€
+                            Ahorro neto: <span class="counter" data-target="13900" data-suffix="€">0€</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="max-w-xl mx-auto bg-brand-card border border-brand-gold/20 rounded-full px-6 py-3 flex items-center justify-between shadow-lg shadow-brand-gold/5 animate-pulse">
+            <div class="max-w-xl mx-auto bg-brand-card border border-brand-gold/20 rounded-full px-6 py-3 flex items-center justify-between shadow-lg shadow-brand-gold/5 animate-pulse reveal-on-scroll delay-400">
                 <div class="flex items-center gap-3">
                     <span class="h-2 w-2 bg-green-500 rounded-full"></span>
                     <span class="text-xs text-white"><span class="font-bold text-brand-gold">Última Importación:</span> BMW 320d touring M sport</span>
@@ -501,12 +546,12 @@
     <section id="calculadora" class="py-24 bg-brand-bg border-y border-white/5 relative">
         
         <div class="absolute inset-0 z-40 bg-brand-bg/60 backdrop-blur-[2px] flex items-center justify-center overflow-hidden">
-            <div class="wip-stamp text-xl md:text-3xl text-center">
+            <div class="wip-stamp text-xl md:text-3xl text-center reveal-on-scroll">
                 <i class="fa-solid fa-wrench mr-2"></i> Herramienta en construcción
             </div>
         </div>
 
-        <div class="container mx-auto px-6 max-w-4xl text-center relative z-10 pointer-events-none opacity-50 select-none">
+        <div class="container mx-auto px-6 max-w-4xl text-center relative z-10 pointer-events-none opacity-50 select-none reveal-on-scroll">
             <h2 class="font-display text-3xl font-bold text-white mb-2">Calculadora de Oportunidad</h2>
             <p class="text-brand-muted mb-10 text-sm">Simula la viabilidad de tu importación</p>
             
@@ -544,39 +589,39 @@
 
     <section class="py-24 bg-brand-surface">
         <div class="container mx-auto px-6">
-            <h2 class="font-display text-3xl font-bold text-white text-center mb-16">Delegación Total.</h2>
+            <h2 class="font-display text-3xl font-bold text-white text-center mb-16 reveal-on-scroll">Delegación Total.</h2>
             
             <div class="flex flex-col md:flex-row justify-between relative gap-8">
-                <div class="hidden md:block absolute top-6 left-0 w-full h-0.5 bg-white/10 -z-10"></div>
+                <div class="hidden md:block absolute top-6 left-0 w-full h-0.5 bg-white/10 -z-10 reveal-on-scroll"></div>
                 
-                <div class="flex-1 text-center">
+                <div class="flex-1 text-center reveal-on-scroll delay-100">
                     <div class="w-12 h-12 mx-auto bg-brand-bg border border-brand-gold text-brand-gold rounded-full flex items-center justify-center font-bold mb-4">1</div>
                     <h4 class="text-white font-bold text-sm">Encargo</h4>
                     <p class="text-xs text-brand-muted mt-2">Tú defines el coche.</p>
                 </div>
-                <div class="flex-1 text-center">
+                <div class="flex-1 text-center reveal-on-scroll delay-200">
                     <div class="w-12 h-12 mx-auto bg-brand-bg border border-brand-gold text-brand-gold rounded-full flex items-center justify-center font-bold mb-4">2</div>
                     <h4 class="text-white font-bold text-sm">Búsqueda</h4>
                     <p class="text-xs text-brand-muted mt-2">Localizamos unidades reales.</p>
                 </div>
-                <div class="flex-1 text-center">
+                <div class="flex-1 text-center reveal-on-scroll delay-300">
                     <div class="w-12 h-12 mx-auto bg-brand-bg border border-brand-gold text-brand-gold rounded-full flex items-center justify-center font-bold mb-4">3</div>
                     <h4 class="text-white font-bold text-sm">Peritaje</h4>
                     <p class="text-xs text-brand-muted mt-2">Viajamos y verificamos.</p>
                 </div>
-                <div class="flex-1 text-center">
+                <div class="flex-1 text-center reveal-on-scroll delay-400">
                     <div class="w-12 h-12 mx-auto bg-brand-bg border border-brand-gold text-brand-gold rounded-full flex items-center justify-center font-bold mb-4">4</div>
                     <h4 class="text-white font-bold text-sm">Gestión</h4>
                     <p class="text-xs text-brand-muted mt-2">Matriculamos y transportamos.</p>
                 </div>
-                <div class="flex-1 text-center">
+                <div class="flex-1 text-center reveal-on-scroll delay-500">
                     <div class="w-12 h-12 mx-auto bg-brand-gold text-brand-bg rounded-full flex items-center justify-center font-bold mb-4">5</div>
                     <h4 class="text-white font-bold text-sm">Entrega</h4>
                     <p class="text-xs text-brand-muted mt-2">Tú recibes las llaves.</p>
                 </div>
             </div>
             
-            <div class="mt-16 grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+            <div class="mt-16 grid md:grid-cols-2 gap-4 max-w-4xl mx-auto reveal-on-scroll delay-500">
                 <div class="bg-white/5 p-6 rounded text-center border border-white/10">
                     <span class="text-brand-muted uppercase text-xs font-bold block mb-2">Tu Rol</span>
                     <span class="text-white font-display text-xl">"Aprobar y Disfrutar"</span>
@@ -591,10 +636,10 @@
 
     <section id="faq" class="py-24 bg-brand-bg">
         <div class="container mx-auto px-6 max-w-5xl">
-            <h2 class="font-display text-3xl font-bold text-white text-center mb-12">Miedos y Preguntas Frecuentes</h2>
+            <h2 class="font-display text-3xl font-bold text-white text-center mb-12 reveal-on-scroll">Miedos y Preguntas Frecuentes</h2>
             
             <div class="grid md:grid-cols-2 gap-6">
-                <div class="space-y-4">
+                <div class="space-y-4 reveal-on-scroll delay-100">
                     <details class="bg-brand-surface p-4 rounded border border-white/5 cursor-pointer">
                         <summary class="text-white font-bold text-sm flex justify-between">¿Y si los KM están trucados?</summary>
                         <p class="text-brand-muted text-xs mt-3 leading-relaxed">Imposible. Cruzamos datos de ITV alemana (TÜV), libro digital de la marca y horas de motor en centralita. Si hay discrepancia, descartamos el coche.</p>
@@ -617,7 +662,7 @@
                     </details>
                 </div>
                 
-                <div class="space-y-4">
+                <div class="space-y-4 reveal-on-scroll delay-200">
                     <details class="bg-brand-surface p-4 rounded border border-white/5 cursor-pointer">
                         <summary class="text-white font-bold text-sm flex justify-between">¿Y si tuvo un accidente oculto?</summary>
                         <p class="text-brand-muted text-xs mt-3 leading-relaxed">Nuestra medición de pintura lo detecta. Si una pieza tiene masilla o espesor doble, lo sabremos. No compramos siniestros.</p>
@@ -647,14 +692,14 @@
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[1px] bg-gradient-to-r from-transparent via-brand-gold/20 to-transparent"></div>
 
         <div class="container mx-auto px-6 relative z-10">
-            <div class="text-center mb-16">
+            <div class="text-center mb-16 reveal-on-scroll">
                 <span class="text-brand-gold font-bold uppercase text-xs tracking-widest mb-2 block">El Equipo</span>
                 <h2 class="font-display text-3xl md:text-4xl font-bold text-white">Tradición e Ingeniería</h2>
             </div>
 
             <div class="grid lg:grid-cols-12 gap-12 items-center">
                 
-                <div class="lg:col-span-4 space-y-12 text-center lg:text-right">
+                <div class="lg:col-span-4 space-y-12 text-center lg:text-right reveal-on-scroll delay-100">
                     <div class="group">
                         <h3 class="text-white font-display font-bold text-xl mb-3 group-hover:text-brand-gold transition">
                             Valentín: La Experiencia
@@ -673,7 +718,7 @@
                     </div>
                 </div>
 
-                <div class="lg:col-span-4 relative flex justify-center">
+                <div class="lg:col-span-4 relative flex justify-center reveal-on-scroll delay-200">
                     <div class="absolute inset-0 bg-brand-gold/10 blur-3xl rounded-full"></div>
                     
                     <div class="relative w-80 h-96 rounded-full md:rounded-[100px] overflow-hidden border-2 border-brand-gold/30 shadow-2xl">
@@ -686,7 +731,7 @@
                     </div>
                 </div>
 
-                <div class="lg:col-span-4 space-y-12 text-center lg:text-left">
+                <div class="lg:col-span-4 space-y-12 text-center lg:text-left reveal-on-scroll delay-300">
                     <div class="group">
                         <h3 class="text-white font-display font-bold text-xl mb-3 group-hover:text-brand-gold transition">
                             Iván: La Evolución
@@ -707,7 +752,7 @@
 
             </div>
 
-            <div class="mt-20 text-center max-w-3xl mx-auto">
+            <div class="mt-20 text-center max-w-3xl mx-auto reveal-on-scroll delay-400">
                 <div class="h-px w-24 bg-brand-gold mx-auto mb-8"></div>
                 <p class="text-lg md:text-xl text-white font-light italic">
                     "Pero sobre todo: Estamos trabajando cada día para ser <span class="text-brand-gold font-bold not-italic">los mejores peritos de la península</span> en importación de vehículos."
@@ -721,7 +766,7 @@
 
         <div class="container mx-auto px-6 relative z-10 text-center">
             
-            <div class="max-w-2xl mx-auto mb-10">
+            <div class="max-w-2xl mx-auto mb-10 reveal-on-scroll">
                 <span class="text-brand-gold font-bold uppercase text-[10px] tracking-widest border border-brand-gold/20 px-3 py-1 rounded mb-4 inline-block">Plazas Limitadas</span>
                 <h2 class="font-display text-3xl font-bold text-white mb-4">¿Te reservamos un hueco?</h2>
                 <p class="text-brand-muted text-sm leading-relaxed mb-6">
@@ -733,7 +778,7 @@
                 </div>
             </div>
 
-            <div class="max-w-lg mx-auto bg-brand-bg p-8 rounded-lg border border-white/10 shadow-2xl text-left" id="contact-container">
+            <div class="max-w-lg mx-auto bg-brand-bg p-8 rounded-lg border border-white/10 shadow-2xl text-left reveal-on-scroll delay-200" id="contact-container">
                 <h3 class="text-white font-bold text-lg mb-6 text-center">Solicitar Entrevista de Importación</h3>
                 
                 <form id="contact-form" class="space-y-4">
@@ -791,15 +836,12 @@
         const form = document.getElementById('contact-form');
         const container = document.getElementById('contact-container');
         
-        // IMPORTANTE: URL de Formspree que obtuviste
         const formUrl = "https://formspree.io/f/xkglbwwq";
 
         form.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Evita que el navegador recargue la página
+            event.preventDefault();
 
             const formData = new FormData(form);
-            
-            // Muestra un mensaje de "Enviando..."
             const originalButtonText = event.submitter.textContent;
             event.submitter.textContent = 'Enviando...';
             event.submitter.disabled = true;
@@ -809,12 +851,11 @@
                     method: 'POST',
                     body: formData,
                     headers: {
-                        'Accept': 'application/json' // Indica que esperamos una respuesta JSON
+                        'Accept': 'application/json'
                     }
                 });
 
                 if (response.ok) {
-                    // Éxito: Reemplazamos el formulario con el mensaje de agradecimiento
                     container.innerHTML = `
                         <div class="text-center py-10 px-4">
                             <i class="fa-solid fa-check-circle text-brand-gold text-5xl mb-4"></i>
@@ -827,7 +868,6 @@
                         </div>
                     `;
                 } else {
-                    // Fallo: Mantenemos el formulario y mostramos un error
                     alert('Hubo un error al enviar el formulario. Por favor, intenta de nuevo o contáctanos por WhatsApp.');
                     event.submitter.textContent = originalButtonText;
                     event.submitter.disabled = false;
@@ -867,14 +907,101 @@
     </a>
 
     <script>
+        // 1. Lógica del Splash Screen
         window.addEventListener('load', () => {
             const splashScreen = document.getElementById('splash-screen');
             setTimeout(() => {
                 splashScreen.classList.add('splash-hidden');
                 setTimeout(() => {
                     splashScreen.style.display = 'none';
-                }, 500); // Espera la duración de la transición CSS
-            }, 2000); // Duración de la animación
+                }, 500); 
+            }, 2000); 
+        });
+
+        // 2. Lógica de Scroll Reveal y Contadores
+        const observerOptions = {
+            threshold: 0.1, 
+            rootMargin: "0px 0px -50px 0px" 
+        };
+
+        // Función para animar números
+        function animateValue(obj, start, end, duration, decimals = 0, suffix = "") {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                
+                // Función de easing para suavidad
+                const easeOutQuad = 1 - Math.pow(1 - progress, 3); 
+                
+                const value = progress * (end - start) + start;
+                
+                // Formatear con puntos de miles y decimales
+                let formattedValue = value.toFixed(decimals);
+                if (decimals === 0) {
+                    formattedValue = Math.floor(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                } else {
+                    formattedValue = parseFloat(formattedValue).toString(); // Simple para decimales pequeños como 1.4
+                }
+
+                obj.innerHTML = formattedValue + suffix;
+                
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    // Asegurar valor final limpio
+                    let finalValue = end.toFixed(decimals);
+                    if (decimals === 0) {
+                        finalValue = end.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                    } else {
+                        finalValue = parseFloat(finalValue).toString();
+                    }
+                    obj.innerHTML = finalValue + suffix;
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Animación de aparición estándar
+                    entry.target.classList.add('reveal-visible');
+                    
+                    // Si es el contenedor del sello de rechazo, activar la animación del hijo
+                    if(entry.target.id === 'rejected-container') {
+                        const stamp = document.getElementById('rejected-stamp');
+                        // Pequeño retraso para que aparezca la imagen primero
+                        setTimeout(() => {
+                            stamp.classList.add('stamp-animate');
+                        }, 200);
+                    }
+
+                    // Si es un contador, iniciar conteo
+                    if (entry.target.classList.contains('counter') && !entry.target.classList.contains('counted')) {
+                        const target = parseFloat(entry.target.getAttribute('data-target'));
+                        const suffix = entry.target.getAttribute('data-suffix') || "";
+                        const decimals = parseInt(entry.target.getAttribute('data-decimals')) || 0;
+                        animateValue(entry.target, 0, target, 2000, decimals, suffix);
+                        entry.target.classList.add('counted');
+                    }
+
+                    // Dejar de observar si no es necesario repetir (opcional, aquí no desobservamos contadores para evitar bugs si sales y entras rápido)
+                    if (!entry.target.classList.contains('counter')) {
+                        observer.unobserve(entry.target);
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Seleccionar elementos revelar
+            const revealElements = document.querySelectorAll('.reveal-on-scroll');
+            revealElements.forEach((el) => observer.observe(el));
+
+            // Seleccionar contadores que no tengan la clase reveal-on-scroll (si los hay)
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach((el) => observer.observe(el));
         });
     </script>
 
